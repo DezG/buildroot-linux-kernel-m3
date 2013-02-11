@@ -1314,6 +1314,51 @@ static struct mtd_partition multi_partition_info[] =
 
 };
 
+static struct mtd_partition multi_partition_info_4G[] = 
+{
+#ifdef CONFIG_AML_NAND_ENV
+    {
+	.name = "ubootenv",
+	.offset = 8*1024*1024,
+	.size = 4*1024*1024,
+    },
+#endif
+    {
+	.name = "logo",
+	.offset = 8*1024*1024,
+	.size = 4*1024*1024,
+    },
+    {
+        .name = "boot",
+        .offset = 12*1024*1024,
+        .size = 8*1024*1024,
+    },
+    {
+        .name = "system",
+        .offset = 20*1024*1024,
+        .size = 512*1024*1024,
+    },
+	{
+        .name = "cache",
+        .offset = 532*1024*1024,
+        .size = 300*1024*1024,
+    },
+    {
+	.name = "NFTL_Part",
+	.offset = 832*1024*1024,
+	.size = 1024*1024*1024,
+    },
+    {
+        .name = "backup",
+        .offset = 1856*1024*1024,
+        .size = 200*1024*1024,
+    },
+    {
+        .name = "userdata",
+        .offset = MTDPART_OFS_APPEND,
+        .size = MTDPART_SIZ_FULL,
+    },
+};
 static void nand_set_parts(uint64_t size, struct platform_nand_chip *chip)
 {
     printk("set nand parts for chip %lldMB\n", (size/(1024*1024)));
@@ -1323,9 +1368,8 @@ static void nand_set_parts(uint64_t size, struct platform_nand_chip *chip)
         chip->nr_partitions = ARRAY_SIZE(multi_partition_info);
         }
     else {
-        // Undefined
-        chip->partitions = NULL;
-        chip->nr_partitions = 0;
+        chip->partitions = multi_partition_info_4G;
+        chip->nr_partitions = ARRAY_SIZE(multi_partition_info_4G);
         }
     return;
 }
